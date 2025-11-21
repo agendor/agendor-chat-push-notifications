@@ -1,5 +1,8 @@
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
+import jestPlugin from 'eslint-plugin-jest';
+import prettierConfig from 'eslint-config-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
 
 export default [
   {
@@ -17,6 +20,7 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tseslint,
+      prettier: prettierPlugin,
     },
     rules: {
       ...tseslint.configs['recommended-type-checked'].rules,
@@ -26,6 +30,17 @@ export default [
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'no-console': ['warn', { allow: ['info', 'warn', 'error'] }],
+      'prettier/prettier': 'error',
+    },
+  },
+  prettierConfig,
+  {
+    files: ['tests/**/*.ts'],
+    plugins: {
+      jest: jestPlugin,
+    },
+    rules: {
+      ...jestPlugin.configs.recommended.rules,
     },
   },
 ];

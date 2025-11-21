@@ -24,6 +24,7 @@ services:
       DATABASE_USER: postgres
       DATABASE_PASSWORD: p7HWd2DsbL
       DATABASE_NAME: ac_push_notifications
+      DATABASE_URL: postgresql://postgres:p7HWd2DsbL@postgres:5432/ac_push_notifications
     ports:
       - '3000:3000'
     command: sh -c "npm run db:migrate && node dist/server.js"
