@@ -3,8 +3,8 @@
 ### Tecnologias
 
 - Node.js 20, Express 5, Prisma, PostgreSQL
-- Testes com Jest + Supertest
-- Lint com ESLint
+- Testes com Vitest + Supertest
+- Lint com ESLint + Prettier
 - Docker + docker-compose
 
 ---
@@ -34,19 +34,28 @@ docker compose up --build
 - `npm run db:migrate:dev` — cria e aplica novas migrações (desenvolvimento)
 - `npm run db:generate` — gera o Prisma Client
 - `npm run db:studio` — abre o Prisma Studio (interface visual do banco)
-- `npm test` — roda testes unitários (serviço + controller)
+- `npm test` — roda todos os testes (serviço + controller)
+- `npm run test:watch` — roda testes em modo watch
+- `npm run test:ui` — abre interface visual do Vitest
+- `npm run test:coverage` — gera relatório de cobertura
 - `npm run lint` — validação ESLint/TypeScript
+- `npm run format` — formata código com Prettier
+- `npm run format:check` — verifica formatação
 
 ---
 
 ## Testes & Lint
 
 ```bash
-npm test           # todos os testes
-npm run lint       # analisa src/ e tests/
+npm test                  # todos os testes
+npm run test:watch        # modo watch
+npm run test:ui           # interface visual
+npm run test:coverage     # relatório de cobertura
+npm run lint              # analisa src/ e tests/
+npm run format            # formata código
 ```
 
-Os testes de serviço usam um repositório em memória e capturam eventos emitidos para garantir a regra de negócio. Os testes de controller exercitam o endpoint `POST /v1/tokens` via Supertest.
+Os testes de serviço usam um repositório em memória e capturam eventos emitidos para garantir a regra de negócio. Os testes de controller exercitam o endpoint `POST /v1/tokens` via Supertest. Utilizamos Vitest para execução dos testes com suporte nativo a TypeScript e execução rápida.
 
 ---
 

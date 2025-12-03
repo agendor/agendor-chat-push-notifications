@@ -59,14 +59,18 @@ const start = async () => {
   });
 
   // Graceful shutdown
-  process.on('SIGINT', async () => {
+  const shutdown = async (signal: string) => {
+    console.info(`${signal} recebido, encerrando servidor...`);
     await prisma.$disconnect();
     process.exit(0);
+  };
+
+  process.on('SIGINT', () => {
+    void shutdown('SIGINT');
   });
 
-  process.on('SIGTERM', async () => {
-    await prisma.$disconnect();
-    process.exit(0);
+  process.on('SIGTERM', () => {
+    void shutdown('SIGTERM');
   });
 };
 
