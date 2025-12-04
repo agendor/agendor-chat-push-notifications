@@ -17,24 +17,32 @@ describe('UpsertPushTokenService', () => {
     const service = new UpsertPushTokenService(repository, eventBus);
 
     const result = await service.execute({
+      accountId: 'account-1',
       userId: 'user-1',
       deviceId: 'device-1',
       fcmToken: 'fcm-1',
     });
 
     expect(result.created).toBe(true);
+    expect(result.token.accountId).toBe('account-1');
     expect(result.token.userId).toBe('user-1');
     expect(events).toHaveLength(1);
     expect(events[0].payload.created).toBe(true);
   });
 
-  it('atualiza um token existente para o mesmo user + device', async () => {
+  it('atualiza um token existente para o mesmo account + user + device', async () => {
     const repository = new InMemoryPushTokenRepository();
     const eventBus = new EventBus();
     const service = new UpsertPushTokenService(repository, eventBus);
 
-    await service.execute({ userId: 'user-1', deviceId: 'device-1', fcmToken: 'fcm-1' });
+    await service.execute({
+      accountId: 'account-1',
+      userId: 'user-1',
+      deviceId: 'device-1',
+      fcmToken: 'fcm-1',
+    });
     const result = await service.execute({
+      accountId: 'account-1',
       userId: 'user-1',
       deviceId: 'device-1',
       fcmToken: 'fcm-2',
@@ -49,14 +57,21 @@ describe('UpsertPushTokenService', () => {
     const eventBus = new EventBus();
     const service = new UpsertPushTokenService(repository, eventBus);
 
-    await service.execute({ userId: 'user-1', deviceId: 'device-1', fcmToken: 'fcm-1' });
+    await service.execute({
+      accountId: 'account-1',
+      userId: 'user-1',
+      deviceId: 'device-1',
+      fcmToken: 'fcm-1',
+    });
     const result = await service.execute({
+      accountId: 'account-2',
       userId: 'user-2',
       deviceId: 'device-2',
       fcmToken: 'fcm-1',
     });
 
     expect(result.created).toBe(false);
+    expect(result.token.accountId).toBe('account-2');
     expect(result.token.userId).toBe('user-2');
     expect(result.token.deviceId).toBe('device-2');
   });

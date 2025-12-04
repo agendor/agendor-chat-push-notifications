@@ -15,7 +15,8 @@ export class UpsertPushTokenService {
   ) {}
 
   async execute(payload: UpsertPayload): Promise<UpsertResult> {
-    const existingByComposite = await this.repository.findByUserAndDevice(
+    const existingByComposite = await this.repository.findByAccountUserAndDevice(
+      payload.accountId,
       payload.userId,
       payload.deviceId,
     );
@@ -39,6 +40,7 @@ export class UpsertPushTokenService {
   }
 
   private async updateToken(token: PushToken, payload: UpsertPayload): Promise<PushToken> {
+    token.accountId = payload.accountId;
     token.userId = payload.userId;
     token.deviceId = payload.deviceId;
     token.fcmToken = payload.fcmToken;
@@ -49,6 +51,7 @@ export class UpsertPushTokenService {
 
   private emitEvent(token: PushToken, created: boolean): void {
     this.eventBus.emit(TOKEN_UPSERTED_EVENT, {
+      accountId: token.accountId,
       userId: token.userId,
       deviceId: token.deviceId,
       fcmToken: token.fcmToken,

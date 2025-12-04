@@ -8,6 +8,7 @@ export class InMemoryPushTokenRepository implements PushTokenRepository {
   create(data: UpsertPayload): PushToken {
     const token = new PushToken();
     token.id = randomUUID();
+    token.accountId = data.accountId;
     token.userId = data.userId;
     token.deviceId = data.deviceId;
     token.fcmToken = data.fcmToken;
@@ -16,10 +17,17 @@ export class InMemoryPushTokenRepository implements PushTokenRepository {
     return token;
   }
 
-  findByUserAndDevice(userId: string, deviceId: string): Promise<PushToken | null> {
+  findByAccountUserAndDevice(
+    accountId: string,
+    userId: string,
+    deviceId: string,
+  ): Promise<PushToken | null> {
     const token =
       Array.from(this.storage.values()).find(
-        (candidate) => candidate.userId === userId && candidate.deviceId === deviceId,
+        (candidate) =>
+          candidate.accountId === accountId &&
+          candidate.userId === userId &&
+          candidate.deviceId === deviceId,
       ) ?? null;
     return Promise.resolve(token);
   }

@@ -13,13 +13,15 @@ datasource db {
 
 model PushToken {
   id        String   @id @default(uuid())
+  accountId String   @map("account_id") @db.VarChar(255)
   userId    String   @map("user_id") @db.VarChar(255)
   deviceId  String   @map("device_id") @db.VarChar(255)
   fcmToken  String   @unique @map("fcm_token") @db.VarChar(512)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  @@unique([userId, deviceId], name: "UQ_push_tokens_user_device")
+  @@unique([accountId, userId, deviceId], name: "UQ_push_tokens_account_user_device")
+  @@index([accountId])
   @@index([userId])
   @@index([deviceId])
   @@map("push_tokens")
