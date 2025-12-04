@@ -7,15 +7,21 @@ export class PrismaPushTokenRepository implements PushTokenRepository {
 
   create(data: UpsertPayload): PushToken {
     const token = new PushToken();
+    token.accountId = data.accountId;
     token.userId = data.userId;
     token.deviceId = data.deviceId;
     token.fcmToken = data.fcmToken;
     return token;
   }
 
-  async findByUserAndDevice(userId: string, deviceId: string): Promise<PushToken | null> {
+  async findByAccountUserAndDevice(
+    accountId: string,
+    userId: string,
+    deviceId: string,
+  ): Promise<PushToken | null> {
     const result = await this.prisma.pushToken.findFirst({
       where: {
+        accountId,
         userId,
         deviceId,
       },
@@ -44,6 +50,7 @@ export class PrismaPushTokenRepository implements PushTokenRepository {
       const result = await this.prisma.pushToken.update({
         where: { id: token.id },
         data: {
+          accountId: token.accountId,
           userId: token.userId,
           deviceId: token.deviceId,
           fcmToken: token.fcmToken,
@@ -54,6 +61,7 @@ export class PrismaPushTokenRepository implements PushTokenRepository {
       // Create new token
       const result = await this.prisma.pushToken.create({
         data: {
+          accountId: token.accountId,
           userId: token.userId,
           deviceId: token.deviceId,
           fcmToken: token.fcmToken,
@@ -65,6 +73,7 @@ export class PrismaPushTokenRepository implements PushTokenRepository {
 
   private mapToEntity(prismaToken: {
     id: string;
+    accountId: string;
     userId: string;
     deviceId: string;
     fcmToken: string;
@@ -73,6 +82,7 @@ export class PrismaPushTokenRepository implements PushTokenRepository {
   }): PushToken {
     const token = new PushToken();
     token.id = prismaToken.id;
+    token.accountId = prismaToken.accountId;
     token.userId = prismaToken.userId;
     token.deviceId = prismaToken.deviceId;
     token.fcmToken = prismaToken.fcmToken;

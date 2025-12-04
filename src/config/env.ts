@@ -11,6 +11,7 @@ const number = (value: string | undefined, fallback: number): number => {
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
   port: number(process.env.PORT, 3000),
+  jwtSecretKey: process.env.JWT_SECRET_KEY ?? '',
   database: {
     host: process.env.DATABASE_HOST ?? 'localhost',
     port: number(process.env.DATABASE_PORT, 5432),

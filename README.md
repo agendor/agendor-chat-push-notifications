@@ -59,17 +59,37 @@ Os testes de serviço usam um repositório em memória e capturam eventos emitid
 
 ---
 
+### Gerando Tokens de Teste
+
+Para facilitar os testes, há um script que gera tokens JWT válidos:
+
+```bash
+# Sintaxe básica
+node scripts/generate-jwt.js <account_id> <user_id>
+
+# Exemplo
+node scripts/generate-jwt.js account-123 user-456
+```
+
+---
+
 ## Documentação do endpoint
 
 ### POST `/v1/tokens`
 
-Upsert do token FCM para um par `userId + deviceId`.
+Registra ou atualiza o token FCM para um dispositivo do usuário autenticado.
+
+**Headers**
+
+```http
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+```
 
 **Body**
 
 ```json
 {
-  "userId": "user-123",
   "deviceId": "device-abc",
   "fcmToken": "fcm-token"
 }
@@ -83,7 +103,8 @@ Upsert do token FCM para um par `userId + deviceId`.
 {
   "data": {
     "id": "uuid",
-    "userId": "user-123",
+    "accountId": "account-123",
+    "userId": "user-456",
     "deviceId": "device-abc",
     "fcmToken": "fcm-token",
     "createdAt": "2025-01-01T10:00:00.000Z",
@@ -96,6 +117,7 @@ Upsert do token FCM para um par `userId + deviceId`.
 ```
 
 - `400 Bad Request` para payload inválido (retorna lista de erros por campo)
+- `401 Unauthorized` para token ausente, inválido ou expirado
 
 ---
 
