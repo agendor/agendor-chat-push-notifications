@@ -19,18 +19,18 @@ const connectDatabase = async (
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       await prisma.$connect();
-      console.info('✅ Conexão com banco de dados estabelecida');
+      console.info('✅ Database connection established');
       return;
     } catch (error) {
       console.warn(
-        `⚠️  Tentativa ${attempt}/${maxRetries} de conexão com banco falhou:`,
+        `⚠️  Database connection attempt ${attempt}/${maxRetries} failed:`,
         error instanceof Error ? error.message : error,
       );
       if (attempt < maxRetries) {
-        console.info(`🔄 Tentando novamente em ${retryDelay}ms...`);
+        console.info(`🔄 Retrying in ${retryDelay}ms...`);
         await sleep(retryDelay);
       } else {
-        throw new Error(`Falha ao conectar com banco de dados após ${maxRetries} tentativas`);
+        throw new Error(`Failed to connect to database after ${maxRetries} attempts`);
       }
     }
   }
@@ -49,12 +49,12 @@ const start = async () => {
   const app = createApp({ tokenController });
 
   app.listen(env.port, () => {
-    console.info(`🚀 API pronta na porta ${env.port}`);
+    console.info(`🚀 API ready on port ${env.port}`);
   });
 
   // Graceful shutdown
   const shutdown = async (signal: string) => {
-    console.info(`${signal} recebido, encerrando servidor...`);
+    console.info(`${signal} received, shutting down server...`);
     await prisma.$disconnect();
     process.exit(0);
   };
@@ -69,6 +69,6 @@ const start = async () => {
 };
 
 start().catch((error) => {
-  console.error('Falha ao subir o servidor', error);
+  console.error('Failed to start server', error);
   process.exit(1);
 });

@@ -37,7 +37,7 @@ describe('TokenController', () => {
     vi.spyOn(env, 'jwtSecretKey', 'get').mockReturnValue('test-secret-key');
   });
 
-  it('retorna 201 ao registrar um novo token', async () => {
+  it('returns 201 when registering a new token', async () => {
     const app = buildTestApp();
     const token = generateTestToken('account-1', 'user-1');
 
@@ -56,7 +56,7 @@ describe('TokenController', () => {
     expect(body.meta.created).toBe(true);
   });
 
-  it('retorna 401 quando o token não é fornecido', async () => {
+  it('returns 401 when token is not provided', async () => {
     const app = buildTestApp();
     const response = await request(app).post('/v1/tokens').send({
       deviceId: 'device-1',
@@ -66,11 +66,11 @@ describe('TokenController', () => {
     expect(response.status).toBe(401);
   });
 
-  it('retorna 401 quando o token é inválido', async () => {
+  it('returns 401 when token is invalid', async () => {
     const app = buildTestApp();
     const response = await request(app)
       .post('/v1/tokens')
-      .set('Authorization', 'Bearer token-invalido')
+      .set('Authorization', 'Bearer invalid-token')
       .send({
         deviceId: 'device-1',
         fcmToken: 'fcm-1',
@@ -79,7 +79,7 @@ describe('TokenController', () => {
     expect(response.status).toBe(401);
   });
 
-  it('retorna 400 quando a validação falha', async () => {
+  it('returns 400 when validation fails', async () => {
     const app = buildTestApp();
     const token = generateTestToken('account-1', 'user-1');
 

@@ -2,7 +2,7 @@ import { InMemoryTokenRepository } from '../../src/repositories/InMemoryTokenRep
 import { UpsertTokenService } from '../../src/services/UpsertTokenService';
 
 describe('UpsertTokenService', () => {
-  it('cria um token quando não existem registros prévios', async () => {
+  it('creates a token when no previous records exist', async () => {
     const repository = new InMemoryTokenRepository();
     const service = new UpsertTokenService(repository);
 
@@ -18,7 +18,7 @@ describe('UpsertTokenService', () => {
     expect(result.token.userId).toBe('user-1');
   });
 
-  it('atualiza um token existente para o mesmo account + user + device', async () => {
+  it('updates an existing token for the same account + user + device', async () => {
     const repository = new InMemoryTokenRepository();
     const service = new UpsertTokenService(repository);
 
@@ -39,7 +39,7 @@ describe('UpsertTokenService', () => {
     expect(result.token.fcmToken).toBe('fcm-2');
   });
 
-  it('reassocia um token existente quando o fcm token já está cadastrado', async () => {
+  it('reassigns an existing token when the fcm token is already registered', async () => {
     const repository = new InMemoryTokenRepository();
     const service = new UpsertTokenService(repository);
 
