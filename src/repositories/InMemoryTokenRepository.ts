@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { PushToken } from '../entities/PushToken';
-import { PushTokenRepository, UpsertPayload } from './PushTokenRepository';
+import { Token } from '../entities/Token';
+import { TokenRepository, UpsertPayload } from './TokenRepository';
 
-export class InMemoryPushTokenRepository implements PushTokenRepository {
-  private storage = new Map<string, PushToken>();
+export class InMemoryTokenRepository implements TokenRepository {
+  private storage = new Map<string, Token>();
 
-  create(data: UpsertPayload): PushToken {
-    const token = new PushToken();
+  create(data: UpsertPayload): Token {
+    const token = new Token();
     token.id = randomUUID();
     token.accountId = data.accountId;
     token.userId = data.userId;
@@ -21,7 +21,7 @@ export class InMemoryPushTokenRepository implements PushTokenRepository {
     accountId: string,
     userId: string,
     deviceId: string,
-  ): Promise<PushToken | null> {
+  ): Promise<Token | null> {
     const token =
       Array.from(this.storage.values()).find(
         (candidate) =>
@@ -32,14 +32,14 @@ export class InMemoryPushTokenRepository implements PushTokenRepository {
     return Promise.resolve(token);
   }
 
-  findByFcmToken(fcmToken: string): Promise<PushToken | null> {
+  findByFcmToken(fcmToken: string): Promise<Token | null> {
     const token =
       Array.from(this.storage.values()).find((candidate) => candidate.fcmToken === fcmToken) ??
       null;
     return Promise.resolve(token);
   }
 
-  save(token: PushToken): Promise<PushToken> {
+  save(token: Token): Promise<Token> {
     token.updatedAt = new Date();
     this.storage.set(token.id, token);
     return Promise.resolve(token);

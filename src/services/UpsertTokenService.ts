@@ -1,18 +1,13 @@
-import { PushToken } from '../entities/PushToken';
-import { EventBus } from '../events/EventBus';
-import { TOKEN_UPSERTED_EVENT } from '../events/TokenEvents';
-import { PushTokenRepository, UpsertPayload } from '../repositories/PushTokenRepository';
+import { Token } from '../entities/Token';
+import { TokenRepository, UpsertPayload } from '../repositories/TokenRepository';
 
 export interface UpsertResult {
-  token: PushToken;
+  token: Token;
   created: boolean;
 }
 
-export class UpsertPushTokenService {
-  constructor(
-    private readonly repository: PushTokenRepository,
-    private readonly eventBus: EventBus,
-  ) {}
+export class UpsertTokenService {
+  constructor(private readonly repository: TokenRepository) {}
 
   async execute(payload: UpsertPayload): Promise<UpsertResult> {
     const existingByComposite = await this.repository.findByAccountUserAndDevice(
@@ -35,27 +30,15 @@ export class UpsertPushTokenService {
 
     const created = this.repository.create(payload);
     const saved = await this.repository.save(created);
-    this.emitEvent(saved, true);
     return { token: saved, created: true };
   }
 
-  private async updateToken(token: PushToken, payload: UpsertPayload): Promise<PushToken> {
+  private async updateToken(token: Token, payload: UpsertPayload): Promise<Token> {
     token.accountId = payload.accountId;
     token.userId = payload.userId;
     token.deviceId = payload.deviceId;
     token.fcmToken = payload.fcmToken;
     const saved = await this.repository.save(token);
-    this.emitEvent(saved, false);
     return saved;
-  }
-
-  private emitEvent(token: PushToken, created: boolean): void {
-    this.eventBus.emit(TOKEN_UPSERTED_EVENT, {
-      accountId: token.accountId,
-      userId: token.userId,
-      deviceId: token.deviceId,
-      fcmToken: token.fcmToken,
-      created,
-    });
   }
 }

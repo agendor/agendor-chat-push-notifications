@@ -1,4 +1,4 @@
-export class PushToken {
+export class Token {
   id!: string;
   accountId!: string;
   userId!: string;

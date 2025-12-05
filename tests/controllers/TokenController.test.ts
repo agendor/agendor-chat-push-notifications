@@ -3,9 +3,8 @@ import { beforeEach, vi } from 'vitest';
 import { createApp } from '../../src/app';
 import { env } from '../../src/config/env';
 import { TokenController } from '../../src/controllers/TokenController';
-import { EventBus } from '../../src/events/EventBus';
-import { InMemoryPushTokenRepository } from '../../src/repositories/InMemoryPushTokenRepository';
-import { UpsertPushTokenService } from '../../src/services/UpsertPushTokenService';
+import { InMemoryTokenRepository } from '../../src/repositories/InMemoryTokenRepository';
+import { UpsertTokenService } from '../../src/services/UpsertTokenService';
 import { generateTestToken } from '../helpers/jwtHelper';
 
 interface TokenResponseBody {
@@ -27,9 +26,8 @@ interface ErrorResponseBody {
 }
 
 const buildTestApp = () => {
-  const repository = new InMemoryPushTokenRepository();
-  const eventBus = new EventBus();
-  const service = new UpsertPushTokenService(repository, eventBus);
+  const repository = new InMemoryTokenRepository();
+  const service = new UpsertTokenService(repository);
   const controller = new TokenController(service);
   return createApp({ tokenController: controller });
 };

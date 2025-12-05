@@ -1,20 +1,10 @@
-import { DomainEvent, EventBus } from '../../src/events/EventBus';
-import { TOKEN_UPSERTED_EVENT, TokenUpsertedPayload } from '../../src/events/TokenEvents';
-import { InMemoryPushTokenRepository } from '../../src/repositories/InMemoryPushTokenRepository';
-import { UpsertPushTokenService } from '../../src/services/UpsertPushTokenService';
+import { InMemoryTokenRepository } from '../../src/repositories/InMemoryTokenRepository';
+import { UpsertTokenService } from '../../src/services/UpsertTokenService';
 
-describe('UpsertPushTokenService', () => {
-  const captureEvents = (eventBus: EventBus) => {
-    const events: DomainEvent<TokenUpsertedPayload>[] = [];
-    eventBus.on<TokenUpsertedPayload>(TOKEN_UPSERTED_EVENT, (event) => events.push(event));
-    return events;
-  };
-
+describe('UpsertTokenService', () => {
   it('cria um token quando não existem registros prévios', async () => {
-    const repository = new InMemoryPushTokenRepository();
-    const eventBus = new EventBus();
-    const events = captureEvents(eventBus);
-    const service = new UpsertPushTokenService(repository, eventBus);
+    const repository = new InMemoryTokenRepository();
+    const service = new UpsertTokenService(repository);
 
     const result = await service.execute({
       accountId: 'account-1',
@@ -26,14 +16,11 @@ describe('UpsertPushTokenService', () => {
     expect(result.created).toBe(true);
     expect(result.token.accountId).toBe('account-1');
     expect(result.token.userId).toBe('user-1');
-    expect(events).toHaveLength(1);
-    expect(events[0].payload.created).toBe(true);
   });
 
   it('atualiza um token existente para o mesmo account + user + device', async () => {
-    const repository = new InMemoryPushTokenRepository();
-    const eventBus = new EventBus();
-    const service = new UpsertPushTokenService(repository, eventBus);
+    const repository = new InMemoryTokenRepository();
+    const service = new UpsertTokenService(repository);
 
     await service.execute({
       accountId: 'account-1',
@@ -53,9 +40,8 @@ describe('UpsertPushTokenService', () => {
   });
 
   it('reassocia um token existente quando o fcm token já está cadastrado', async () => {
-    const repository = new InMemoryPushTokenRepository();
-    const eventBus = new EventBus();
-    const service = new UpsertPushTokenService(repository, eventBus);
+    const repository = new InMemoryTokenRepository();
+    const service = new UpsertTokenService(repository);
 
     await service.execute({
       accountId: 'account-1',

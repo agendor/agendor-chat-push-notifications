@@ -11,7 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model PushToken {
+model Token {
   id        String   @id @default(uuid())
   accountId String   @map("account_id") @db.VarChar(255)
   userId    String   @map("user_id") @db.VarChar(255)
@@ -20,9 +20,9 @@ model PushToken {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  @@unique([accountId, userId, deviceId], name: "UQ_push_tokens_account_user_device")
+  @@unique([accountId, userId, deviceId], name: "UQ_tokens_account_user_device")
   @@index([accountId])
   @@index([userId])
   @@index([deviceId])
-  @@map("push_tokens")
+  @@map("tokens")
 }

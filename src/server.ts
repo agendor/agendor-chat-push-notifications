@@ -1,11 +1,9 @@
 import { createApp } from './app';
 import { env } from './config/env';
 import { TokenController } from './controllers/TokenController';
-import { EventBus } from './events/EventBus';
 import { PrismaClient } from './generated/prisma/client';
-import { TokenEventLogger } from './listeners/TokenEventLogger';
-import { PrismaPushTokenRepository } from './repositories/PrismaPushTokenRepository';
-import { UpsertPushTokenService } from './services/UpsertPushTokenService';
+import { PrismaTokenRepository } from './repositories/PrismaTokenRepository';
+import { UpsertTokenService } from './services/UpsertTokenService';
 
 if (!process.env.DATABASE_URL) {
   process.env.DATABASE_URL = env.databaseUrl;
@@ -43,14 +41,10 @@ const start = async () => {
 
   await connectDatabase(prisma);
 
-  const pushTokenRepository = new PrismaPushTokenRepository(prisma);
+  const tokenRepository = new PrismaTokenRepository(prisma);
 
-  const eventBus = new EventBus();
-  const tokenEventLogger = new TokenEventLogger(eventBus);
-  tokenEventLogger.register();
-
-  const upsertPushTokenService = new UpsertPushTokenService(pushTokenRepository, eventBus);
-  const tokenController = new TokenController(upsertPushTokenService);
+  const upsertTokenService = new UpsertTokenService(tokenRepository);
+  const tokenController = new TokenController(upsertTokenService);
 
   const app = createApp({ tokenController });
 

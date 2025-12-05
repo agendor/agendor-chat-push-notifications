@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodError, ZodIssue } from 'zod';
-import { UpsertPushTokenService } from '../services/UpsertPushTokenService';
-import { pushTokenSchema } from '../validators/pushTokenSchema';
+import { UpsertTokenService } from '../services/UpsertTokenService';
+import { tokenSchema } from '../validators/tokenSchema';
 
 export class TokenController {
-  constructor(private readonly upsertPushTokenService: UpsertPushTokenService) {}
+  constructor(private readonly upsertTokenService: UpsertTokenService) {}
 
   upsert = async (
     request: Request,
@@ -18,8 +18,8 @@ export class TokenController {
         });
       }
 
-      const payload = pushTokenSchema.parse(request.body);
-      const result = await this.upsertPushTokenService.execute({
+      const payload = tokenSchema.parse(request.body);
+      const result = await this.upsertTokenService.execute({
         ...payload,
         accountId: request.auth.accountId,
         userId: request.auth.userId,
